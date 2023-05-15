@@ -19,23 +19,27 @@ const Quote = ({ productItem }) => {
       punctualRate: Yup.string().required("Campo obligatorio"),
       price: Yup.string().required("Campo obligatorio"),
       weeks: Yup.string().required("Campo obligatorio")
-    }),
-    onSubmit: async(datosFormulario) => {
-      let { normalRate, punctualRate, productId, price, weeks } = datosFormulario;
-console.log("hola");
+    })
+  });
+
+  const setValues = async() => {
+    let { normalRate, punctualRate, weeks } = formik.values;
+
+    let price = productItem.price;
+    let productId = productItem.productId;
+
       try {
         let resp = await Service.createCreditQuote(normalRate, punctualRate, productId, price, weeks);
-        let { normalPass, punctualPass } = resp.data;
+        let { normalPass, punctualPass } = resp?.data?.creditQuote;
+        console.log('----->RESP:', resp);
         setNormalPass(normalPass);
         setPunctualPass(punctualPass);
       } catch (error) {
         console.dir(error);
       }
-    }
-  });
 
-  const getClg = () => {
-    console.log("Hola mundo");
+    console.log("----> price", productItem ? productItem.price : "");
+    console.dir(formik.values)
   }
 
   return (
@@ -100,6 +104,7 @@ console.log("hola");
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-default"
             value={ normalPass }
+            readOnly
           />
         </div>
       </div>
@@ -162,13 +167,14 @@ console.log("hola");
             aria-label="Sizing example input"
             aria-describedby="inputGroup-sizing-default"
             value={ punctualPass }
+            readOnly
           />
         </div>
       </div>
       <div className="col-12">
         <button className="btn btn-primary"
-          type="submit"
-          onClick={ getClg() }
+          type="button"
+          onClick={ setValues }
         >
           Calcular
         </button>
