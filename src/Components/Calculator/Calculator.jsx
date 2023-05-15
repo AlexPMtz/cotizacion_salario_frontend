@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import * as Service from "../../Services/Services";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 
 const Calculator = () => {
 
   const [normalRate, setNormalRate] = useState("");
   const [punctualRate, setPunctualRate] = useState("");
+
+  let navigate = useNavigate();
   
   const formik = useFormik({
     initialValues: {
@@ -20,10 +23,10 @@ const Calculator = () => {
 
       try {
         let resp = await Service.createDeadline(weeks);
-        Service.getDeadlines();
         let { deadline } = resp.data;
         setNormalRate(deadline.normalRate);
         setPunctualRate(deadline.punctualRate);
+        navigate('algo');
       } catch (error) {
         console.dir(error);
       }
